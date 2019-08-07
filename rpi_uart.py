@@ -221,15 +221,22 @@ def uart_loop():
             desc = ''
             if len(data) > 8:
                 desc = data[8:].decode()
+            linux_cmd_exec(['sudo', 'rm', '-rf', FILE_INVOICE]);
             th = threading.Thread(target=linux_cmd_exec,
                         args=(['bash', PROGDIR + '/bin/get_invoice.sh', str(msat), '"' + desc + '"'],),
                         name='invoice')
             th.start()
         if cmd == CMD_GETLASTINVOICE:
-            with open(FILE_INVOICE) as f:
-                rep_data = f.read()
-                print('invoice=' + rep_data)
-                rep_data = rep_data.encode()
+            try:
+                with open(FILE_INVOICE) as f:
+                    inv = f.read()
+                    if len(inv) > 0:
+                        print('invoice=' + inv)
+                        rep_data = inv.encode()
+                    else:
+                        print('none')
+            except:
+                print('fail: getlastinvoice')
         if cmd == CMD_EPAPER:
             th = threading.Thread(target=disp_qrcode, args=('', [data], False), name='epaper')
             th.start()
