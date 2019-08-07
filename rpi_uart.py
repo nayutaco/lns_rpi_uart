@@ -231,12 +231,9 @@ def uart_loop():
                 print('invoice=' + rep_data)
                 rep_data = rep_data.encode()
         if cmd == CMD_EPAPER:
-            if not evt_epaper:
-                th = threading.Thread(target=disp_qrcode, args=('', [data], False), name='epaper')
-                th.start()
-                rep_data = [1]
-            else:
-                rep_data = [0]
+            th = threading.Thread(target=disp_qrcode, args=('', [data], False), name='epaper')
+            th.start()
+            rep_data = [1]
         if cmd == CMD_POLL:
             time_poll = time.time()
             msat = 0
@@ -282,5 +279,8 @@ def main():
 
 if __name__ == '__main__':
     while True:
-        main()
+        try:
+            main()
+        except:
+            pass
         print('restart')
